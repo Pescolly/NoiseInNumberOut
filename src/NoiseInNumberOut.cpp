@@ -69,10 +69,9 @@ int main()
 	//word count
 	int word_count = 0;
 	const int LOUDNESS_THRESHOLD = 200;
-	const int BUFFER_SIZE = 2000;
+	const int BUFFER_SIZE = 1100;
 
 	// other helper variables
-	int input_loudness; // temperature sensor value in degrees Celsius
 	uint8_t r, g, b; // resulting LCD backlight color components [0 .. 255]
 	std::stringstream row_1, row_2; // LCD rows
 
@@ -96,61 +95,39 @@ int main()
 			{
 				average += loudness->value();
 			}
+
 			average /= BUFFER_SIZE;
+
 			if (average > LOUDNESS_THRESHOLD)
 			{
+				word_count++;
 				word_found = true;
+//				row_1 << "Word Found! ";
+	//			row_2 << "Wordcount " << word_count;
+				//color is someone is talking
+				r = (int)(0);
+				g = (int)(255);
+				b = (int)(0);
+
+
+				// apply the calculated result
+				lcd->setColor(r, g, b);
 			}
+
 			if (average < LOUDNESS_THRESHOLD)
 			{
-				break;
+
+				if (word_found == true)
+					word_count++;
+
+				r = 255;
+				g = 0;
+				b = 0;
+
+				// apply the calculated result
+				lcd->setColor(r, g, b);
 			}
-//			std::cout << "average: " << average << std::endl;
 		}
-
-
-
-		if (word_found)
-		{
-
-			word_count++;
-			row_1 << "Word Found! ";
-			row_2 << "Wordcount " << word_count;
-			//color is someone is talking
-/*			lcd->setCursor(0,0);
-			lcd->write(row_1.str());
-			lcd->setCursor(1,0);
-			lcd->write(row_2.str());
-*/
-			r = (int)(0);
-			g = (int)(255);
-			b = (int)(0);
-
-			std::cout << "Found a word " << word_count << std::endl;
-			std::cout << "average: " << average << std::endl;
-//			usleep(100000);
-
-		}
-		else
-		{
-			// color if noone is talking
-			row_1 << "NO ONE IS TALKING ";
-			row_2 << "Wordcount " << word_count;
-
-/*
-			lcd->setCursor(0,0);
-			lcd->write(row_1.str());
-			lcd->setCursor(1,0);
-			lcd->write(row_2.str());
-*/
-			r = 255;
-			g = 0;
-			b = 0;
-			sleep(.5);
-		}
-
-		// apply the calculated result
-		lcd->setColor(r, g, b);
 	}
 
 	return MRAA_SUCCESS;

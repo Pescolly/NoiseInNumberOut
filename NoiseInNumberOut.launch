@@ -2,7 +2,7 @@
 <launchConfiguration type="org.eclipse.cdt.launch.remoteApplicationLaunchType">
 <stringAttribute key="com.intel.iotdevkit.launch.config.default" value="NoiseInNumberOut"/>
 <stringAttribute key="org.eclipse.cdt.dsf.gdb.DEBUG_NAME" value="i586-poky-linux-gdb"/>
-<stringAttribute key="org.eclipse.cdt.dsf.gdb.HOST" value="10.60.0.142"/>
+<stringAttribute key="org.eclipse.cdt.dsf.gdb.HOST" value="alva"/>
 <booleanAttribute key="org.eclipse.cdt.dsf.gdb.NON_STOP" value="false"/>
 <stringAttribute key="org.eclipse.cdt.dsf.gdb.PORT" value="2345"/>
 <booleanAttribute key="org.eclipse.cdt.dsf.gdb.REMOTE_TCP" value="true"/>

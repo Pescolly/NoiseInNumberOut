@@ -1,6 +1,7 @@
+
 /*
- * Author: Ivan De Cesaris <ivan.de.cesaris@intel.com>
- * Copyright (c) 2015 Intel Corporation.
+ * Author: Armen Karamian <absoboll@gmail.com>
+ * Copyright (c) 2015 Armen Karamian.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -109,43 +110,43 @@ int main()
 
 
 
-		// display the "Loudness" values on the LCD
-		row_1 << "Loudness " << average << "    ";
-
-
 		if (word_found)
 		{
 
 			word_count++;
+			row_1 << "Word Found! ";
 			row_2 << "Wordcount " << word_count;
-
 			//color is someone is talking
-			lcd->setCursor(0,0);
+/*			lcd->setCursor(0,0);
 			lcd->write(row_1.str());
 			lcd->setCursor(1,0);
 			lcd->write(row_2.str());
-
+*/
 			r = (int)(0);
 			g = (int)(255);
 			b = (int)(0);
 
 			std::cout << "Found a word " << word_count << std::endl;
 			std::cout << "average: " << average << std::endl;
-			usleep(100000);
+//			usleep(100000);
 
 		}
 		else
 		{
 			// color if noone is talking
+			row_1 << "NO ONE IS TALKING ";
+			row_2 << "Wordcount " << word_count;
+
+/*
 			lcd->setCursor(0,0);
 			lcd->write(row_1.str());
 			lcd->setCursor(1,0);
-			lcd->write("NOT TALKING     ");
-
+			lcd->write(row_2.str());
+*/
 			r = 255;
 			g = 0;
 			b = 0;
-			usleep(100000);
+			sleep(.5);
 		}
 
 		// apply the calculated result

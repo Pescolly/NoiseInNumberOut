@@ -67,7 +67,7 @@ int main()
 	//word count
 	int word_count = 0;
 	const int LOUDNESS_THRESHOLD = 200;
-	const int BUFFER_SIZE = 8192;
+	const int BUFFER_SIZE = 100;
 
 	// other helper variables
 	int input_loudness; // temperature sensor value in degrees Celsius
@@ -82,41 +82,41 @@ int main()
 		return MRAA_ERROR_UNSPECIFIED;
 	}
 
-	std::vector<short> buffer[BUFFER_SIZE];
-	// loop forever updating the temperature values every second
-	while (1)
+
+	while (true)
 	{
-
+		bool word_found = false;
 		long average = 0;
-		for (int i = 0; i < BUFFER_SIZE; i++)
+
+		while(true)
 		{
-			average += loudness->value();
+			for (int i = 0; i < BUFFER_SIZE; i++)
+			{
+				average += loudness->value();
+			}
+			average /= BUFFER_SIZE;
+			if (average > LOUDNESS_THRESHOLD)
+			{
+				word_found = true;
+			}
+			if (average < LOUDNESS_THRESHOLD)
+			{
+				break;
+			}
+			std::cout << "average: " << average << std::endl;
 		}
 
-		average /= BUFFER_SIZE;
 
 
-		// display the temperature values on the LCD
+		// display the "Loudness" values on the LCD
 		row_1 << "Loudness " << average << "    ";
-		row_2 << "Wordcount " << word_count << " 	";
 
 
-		if (average < LOUDNESS_THRESHOLD)
+		if (word_found)
 		{
-			// color if noone is talking
-			lcd->setCursor(0,0);
-			lcd->write(row_1.str());
-			lcd->setCursor(1,0);
-			lcd->write("NOT TALKING     ");
+			word_count++;
+			row_2 << "Wordcount " << word_count;
 
-			r = (int)(255);
-			g = (int)(0);
-			b = (int)(0);
-			std::cout << "Not Found a word " << std::endl;
-
-		}
-		else
-		{
 			//color is someone is talking
 			lcd->setCursor(0,0);
 			lcd->write(row_1.str());
@@ -127,14 +127,28 @@ int main()
 			g = (int)(255);
 			b = (int)(0);
 
-			std::cout << "Found a word " << std::endl;
+			std::cout << "Found a word " << word_count << std::endl;
+			std::cout << "average: " << average << std::endl;
+			usleep(100000);
 
+		}
+		else
+		{
+			// color if noone is talking
+			lcd->setCursor(0,0);
+			lcd->write(row_1.str());
+			lcd->setCursor(1,0);
+			lcd->write("NOT TALKING     ");
+
+			r = 255;
+			g = 0;
+			b = 0;
+			usleep(100000);
 		}
 
 		// apply the calculated result
 		lcd->setColor(r, g, b);
 	}
-//	usleep(100000);
 
 	return MRAA_SUCCESS;
 }

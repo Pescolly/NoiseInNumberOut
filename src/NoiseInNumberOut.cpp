@@ -32,6 +32,7 @@
 #include <unistd.h>
 #include <stdint.h>
 #include <vector>
+#include <pthread.h>
 
 /*
  * Monitor audio input and count words
@@ -67,7 +68,7 @@ int main()
 	//word count
 	int word_count = 0;
 	const int LOUDNESS_THRESHOLD = 200;
-	const int BUFFER_SIZE = 100;
+	const int BUFFER_SIZE = 2000;
 
 	// other helper variables
 	int input_loudness; // temperature sensor value in degrees Celsius
@@ -103,7 +104,7 @@ int main()
 			{
 				break;
 			}
-			std::cout << "average: " << average << std::endl;
+//			std::cout << "average: " << average << std::endl;
 		}
 
 
@@ -114,6 +115,7 @@ int main()
 
 		if (word_found)
 		{
+
 			word_count++;
 			row_2 << "Wordcount " << word_count;
 

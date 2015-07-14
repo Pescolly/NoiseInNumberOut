@@ -27,12 +27,19 @@
 #include "jhd1313m1.h"
 #include "groveloudness.h"
 
+#include <stdio.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netdb.h>
+
 #include <climits>
 #include <iostream>
 #include <sstream>
 #include <unistd.h>
 #include <stdint.h>
 #include <vector>
+#include <cstring>
 #include <pthread.h>
 
 /*
@@ -50,6 +57,48 @@
  *
  */
 
+void sendMessage()
+{
+	    int sockfd, portno, n;
+
+	    struct sockaddr_in serv_addr;
+	    struct hostent *server;
+
+	    char buffer[256] = "TALKING";
+	    portno = 8083;
+	    sockfd = socket(AF_INET, SOCK_STREAM, 0);
+	    if (sockfd < 0)
+	        std::cout << "ERROR opening socket" << std::endl;
+	    server = gethostbyname("10.60.0.8");
+	    if (server == NULL)
+	    {
+	        std::cout << "ERROR, no such host\n" << std::endl;
+	        return;
+	    }
+
+	    serv_addr.sin_family = AF_INET;
+
+	    memcpy((char *)server->h_addr,
+	         (char *)&serv_addr.sin_addr.s_addr,
+	         server->h_length);
+
+	    serv_addr.sin_port = htons(portno);
+
+	    if (connect(sockfd,(struct sockaddr *)&serv_addr,sizeof(serv_addr)) < 0)
+	        std::cout <<"ERROR connecting"<<std::endl;
+	    std::cout << "writing: " << std::endl;
+
+	    n = write(sockfd,buffer,strlen(buffer));
+
+	    if (n < 0)
+	    	std::cout << "Error writing to socket" << std::endl;
+	    bzero(buffer,256);
+	    n = read(sockfd,buffer,255);
+	    if (n < 0)
+	    	std::cout << "Error writing to socket" << std::endl;
+
+	    printf("%s\n",buffer);
+}
 
 int main()
 {
@@ -82,8 +131,11 @@ int main()
 		std::cerr << "Can't create all objects, exiting" << std::endl;
 		return MRAA_ERROR_UNSPECIFIED;
 	}
-
-
+/*
+	std::cout << "sending message" << std::endl;
+	sendMessage();
+	std::cout << "message sent" << std::endl;
+*/
 	while (true)
 	{
 		bool word_found = false;
@@ -102,9 +154,7 @@ int main()
 			{
 				word_count++;
 				word_found = true;
-//				row_1 << "Word Found! ";
-	//			row_2 << "Wordcount " << word_count;
-				//color is someone is talking
+
 				r = (int)(0);
 				g = (int)(255);
 				b = (int)(0);
@@ -118,7 +168,9 @@ int main()
 			{
 
 				if (word_found == true)
+				{
 					word_count++;
+				}
 
 				r = 255;
 				g = 0;
